@@ -4,3 +4,7 @@ refresh*.sh
 private*.*
 *.crt
 .DS_Store
+upgrade-example
+vendir
+.vscode
+.gitignore
