@@ -6,7 +6,7 @@ vendir sync
 export TYPE_SPEED=100
 export DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 TEMP_DIR="upgrade-example"
-PROMPT_TIMEOUT=0 #5
+PROMPT_TIMEOUT=0
 
 # Function to pause and clear the screen
 function talkingPoint() {
