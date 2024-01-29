@@ -157,7 +157,7 @@ function statsSoFar {
   echo "The Spring Boot 3.2 with AOT processing version is using $(bc <<< "scale=2; ${MEM3}/${MEM1}*100")% of the original footprint"
 }
 
-function statsSoFarTableNative {
+function statsSoFarTable {
   displayMessage "Comparison of memory usage and startup times"
   echo ""
 
@@ -166,10 +166,10 @@ function statsSoFarTableNative {
   echo "--------------------------------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
-  #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.7.log)
-  #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.7.log)
-  MEM1=$(cat java8with2.7.log2)
-  START1=$(startupTime 'java8with2.7.log')
+  #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.6.log)
+  #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log)
+  MEM1=$(cat java8with2.6.log2)
+  START1=$(startupTime 'java8with2.6.log')
   printf "%-40s %-30s %-20s %-10s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "-" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
