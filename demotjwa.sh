@@ -164,7 +164,7 @@ function statsSoFarTable {
   echo ""
 
   # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (% faster)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
@@ -190,7 +190,7 @@ function statsSoFarTableNative {
   echo ""
 
   # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (% faster)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
@@ -217,7 +217,7 @@ function statsSoFarTableNative {
   printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$START3 ($PERCSTART3% faster)" "$MEM3" "$PERC3%"
 
 
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------------------"
 }
 
 # Display Docker image statistics
