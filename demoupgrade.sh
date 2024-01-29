@@ -71,7 +71,9 @@ function springBootStop {
 # Check the health of the application
 function validateApp {
   displayMessage "Check application health"
-  pei "http :8080/actuator/health"
+  #pei "http :8080/actuator/health"
+  # add loop to recheck if app isn't up yet
+  pei "while ! http :8080/actuator/health 2>/dev/null; do sleep 1; done"
 }
 
 # Display memory usage of the application
@@ -133,23 +135,27 @@ function statsSoFarTable {
   echo ""
 
   # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
+  printf "%-45s %-35s %-25s %-15s %s\n" "Configuration" "Faster" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
   #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.6.log)
   #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log)
   MEM1=$(cat java8with2.6.log2)
-  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.6 with Java 8" "$(startupTime 'java8with2.6.log')" "$MEM1" "-"
+  START1=$(startupTime 'java8with2.6.log')
+  printf "%-45s %-35s %-25s %-15s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
   #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
   MEM2=$(cat java21with3.2.log2)
   PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$(startupTime 'java21with3.2.log')" "$MEM2" "$PERC2%"
+  START2=$(startupTime 'java21with3.2.log')
+  PERCSTART2=$(bc <<< "scale=2; 100 - ${START2}/${START1}*100")
+  printf "%-45s %-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$START2" "$PERCSTART2" "$MEM2" "$PERC2%"
 
   echo "--------------------------------------------------------------------------------------------"
 }
+
 
 function statsSoFarTableNative {
   displayMessage "Comparison of memory usage and startup times"
