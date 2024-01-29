@@ -214,12 +214,11 @@ function statsSoFarTableNative {
   PERC3=$(bc <<< "scale=2; 100 - ${MEM3}/${MEM1}*100")
   START3=$(startupTime 'nativeWith3.2.log')
   PERCSTART3=$(bc <<< "scale=2; 100 - ${START3}/${START1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$START3" "$PERCSTART2%" "$MEM3" "$PERC3%"
+  printf "%-40s %-30s %-20s %-10s %s \n" "Spring Boot 3.2 with AOT, native" "$START3" "$PERCSTART3%" "$MEM3" "$PERC3%"
 
 
   echo "--------------------------------------------------------------------------------------------------------------------"
 }
-
 
 # Display Docker image statistics
 function imageStats {
