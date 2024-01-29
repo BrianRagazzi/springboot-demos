@@ -2,7 +2,7 @@ FROM debian:bookworm
 
 # install dependencies
 RUN apt-get update &&\
-  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y bc ca-certificates curl gcc git gpg procps pv unzip wget zip zlib1g-dev &&\
+  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y bc ca-certificates curl gcc git gpg procps pv unzip wget zip zlib1g-dev nano &&\
   rm -rf /var/lib/apt/lists/*
 
 # install demo magic
@@ -26,4 +26,3 @@ RUN git config --global user.email "demo@example.com" &&\
 
 # install carvel tools (vendir)
 RUN curl -L https://carvel.dev/install.sh | bash
-
