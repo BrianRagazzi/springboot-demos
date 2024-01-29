@@ -6,7 +6,7 @@ vendir sync
 export TYPE_SPEED=100
 export DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 TEMP_DIR="upgrade-example"
-PROMPT_TIMEOUT=5 #5
+PROMPT_TIMEOUT=0 #5
 
 # Function to pause and clear the screen
 function talkingPoint() {
@@ -91,7 +91,8 @@ function showMemoryUsage {
 # Upgrade the application to Spring Boot 3.2
 function rewriteApplication {
   displayMessage "Upgrade to Spring Boot 3.2"
-  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2"
+  #pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2"
+  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2,org.openrewrite.java.spring.boot3.SpringBoot3BestPractices"
 }
 
 # Build a native image of the application
