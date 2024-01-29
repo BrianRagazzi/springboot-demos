@@ -216,7 +216,6 @@ function statsSoFarTableNative {
   PERCSTART3=$(bc <<< "scale=2; 100 - ${START3}/${START1}*100")
   printf "%-40s %-30s %-20s %-10s %s \n" "Spring Boot 3.2 with AOT, native" "$START3" "$PERCSTART3%" "$MEM3" "$PERC3%"
 
-
   echo "--------------------------------------------------------------------------------------------------------------------"
 }
 
