@@ -190,7 +190,7 @@ function statsSoFarTableNative {
   echo ""
 
   # Headers
-  printf "%-40s %-30s %-20s %-10s %s\n" "Configuration" "Startup Time (seconds)" "Faster" "(MB) Used" "(MB) Savings"
+  printf "%-40s %-30s %-20s %-10s %s\n" "Configuration" "Startup Time" "Faster" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
