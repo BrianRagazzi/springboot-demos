@@ -1,0 +1,18 @@
+[INFO] +- org.springframework.boot:spring-boot-starter-actuator:jar:2.7.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.7.0:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.7.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-actuator-autoconfigure:jar:2.7.0:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-actuator:jar:2.7.0:compile
+[INFO] |  \- io.micrometer:micrometer-core:jar:1.9.0:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.7.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.7.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.7.0:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.20:compile
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.3.20:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:5.3.20:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.3.20:compile
+[INFO] |     +- org.springframework:spring-context:jar:5.3.20:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.3.20:compile
+[INFO] \- org.springframework.boot:spring-boot-devtools:jar:2.7.0:runtime
+[INFO]    +- org.springframework.boot:spring-boot:jar:2.7.0:compile
+[INFO]    \- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.0:compile

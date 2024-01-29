@@ -6,13 +6,12 @@ vendir sync
 export TYPE_SPEED=100
 export DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 TEMP_DIR="upgrade-example"
-PROMPT_TIMEOUT=0 #5
+PROMPT_TIMEOUT=5
 
 # Function to pause and clear the screen
 function talkingPoint() {
-  echo "*** $1 ***"
   wait
-  #clear
+  clear
 }
 
 # Initialize SDKMAN and install required Java versions
@@ -53,9 +52,8 @@ function useJava21 {
 
 # Create a simple Spring Boot application
 function cloneApp {
-  displayMessage "Clone a Spring Boot 2.7.0 application"
-  #pei "git clone https://github.com/dashaun/hello-spring-boot-2-6.git ./"
-  pei "git clone --branch 2.7.1 https://github.com/BrianRagazzi/springboot-upgrade.git ./"
+  displayMessage "Clone a Spring Boot 2.6.0 application"
+  pei "git clone https://github.com/dashaun/hello-spring-boot-2-6.git ./"
 }
 
 # Start the Spring Boot application
@@ -72,10 +70,8 @@ function springBootStop {
 
 # Check the health of the application
 function validateApp {
- displayMessage "Check application health"
- #pei "http :8080/actuator/health"
- # add loop to recheck if app isn't up yet
- pei "while ! http :8080/actuator/health 2>/dev/null; do sleep 1; done"
+  displayMessage "Check application health"
+  pei "http :8080/actuator/health"
 }
 
 # Display memory usage of the application
@@ -103,13 +99,13 @@ function buildNative {
 # Start the native image
 function startNative {
   displayMessage "Start the native image"
-  pei "./target/bootweb 2>&1 | tee nativeWith3.2.log &"
+  pei "./target/hello-spring 2>&1 | tee nativeWith3.2.log &"
 }
 
 # Stop the native image
 function stopNative {
   displayMessage "Stop the native image"
-  local npid=$(pgrep bootweb)
+  local npid=$(pgrep hello-spring)
   pei "kill -9 $npid"
 }
 
@@ -137,27 +133,26 @@ function statsSoFar {
   echo ""
   echo "Spring Boot 2.6 with Java 8"
   grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log
-  echo "The process was using $(cat java8with2.6.log) megabytes"
+  echo "The process was using $(cat java8with2.6.log2) megabytes"
   echo ""
   echo ""
   echo "Spring Boot 3.2 with Java 21"
   grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log
-  echo "The process was using $(cat java21with3.2.log) megabytes"
+  echo "The process was using $(cat java21with3.2.log2) megabytes"
   echo ""
   echo ""
   echo "Spring Boot 3.2 with AOT processing, native image"
   grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log
-  echo "The process was using $(cat nativeWith3.2.log) megabytes"
+  echo "The process was using $(cat nativeWith3.2.log2) megabytes"
   echo ""
   echo ""
-  MEM1="$(grep '\S' java8with2.6.log)"
-  MEM2="$(grep '\S' java21with3.2.log)"
-  MEM3="$(grep '\S' nativeWith3.2.log)"
+  MEM1="$(grep '\S' java8with2.6.log2)"
+  MEM2="$(grep '\S' java21with3.2.log2)"
+  MEM3="$(grep '\S' nativeWith3.2.log2)"
   echo ""
   echo "The Spring Boot 3.2 with Java 21 version is using $(bc <<< "scale=2; ${MEM2}/${MEM1}*100")% of the original footprint"
   echo "The Spring Boot 3.2 with AOT processing version is using $(bc <<< "scale=2; ${MEM3}/${MEM1}*100")% of the original footprint"
 }
-
 
 function statsSoFarTable {
   displayMessage "Comparison of memory usage and startup times"
@@ -167,40 +162,11 @@ function statsSoFarTable {
   printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
-  # Spring Boot 2.7 with Java 8
-  #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.7.log)
-  #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.7.log)
-  MEM1=$(cat java8with2.7.log2)
-  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.7 with Java 8" "$(startupTime 'java8with2.7.log')" "$MEM1" "-"
-
-  # Spring Boot 3.2 with Java 21
-  #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
-  MEM2=$(cat java21with3.2.log2)
-  PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$(startupTime 'java21with3.2.log')" "$MEM2" "$PERC2%"
-
-  # Spring Boot 3.2 with AOT processing, native image
-  #STARTUP3=$(grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log)
-  #MEM3=$(cat nativeWith3.2.log)
-  #PERC3=$(bc <<< "scale=2; 100 - ${MEM3}/${MEM1}*100")
-  #printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$(startupTime 'nativeWith3.2.log')" "$MEM3" "$PERC3%"
-
-  echo "--------------------------------------------------------------------------------------------"
-}
-
-function statsSoFarTableNative {
-  displayMessage "Comparison of memory usage and startup times"
-  echo ""
-
-  # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "(MB) Used" "(MB) Savings"
-  echo "--------------------------------------------------------------------------------------------"
-
-  # Spring Boot 2.7 with Java 8
-  #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.7.log)
-  #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.7.log)
-  MEM1=$(cat java8with2.7.log2)
-  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.7 with Java 8" "$(startupTime 'java8with2.7.log')" "$MEM1" "-"
+  # Spring Boot 2.6 with Java 8
+  #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.6.log)
+  #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log)
+  MEM1=$(cat java8with2.6.log2)
+  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.6 with Java 8" "$(startupTime 'java8with2.6.log')" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
   #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
@@ -217,7 +183,6 @@ function statsSoFarTableNative {
   echo "--------------------------------------------------------------------------------------------"
 }
 
-
 # Display Docker image statistics
 function imageStats {
   pei "docker images | grep demo"
@@ -227,38 +192,38 @@ function imageStats {
 initSDKman
 init
 useJava8
-talkingPoint "Clone a Spring Boot v2.7 app"
+talkingPoint
 cloneApp
-talkingPoint "Start Spring Boot app as-is, wait for SPRING logo"
-springBootStart java8with2.7.log
-talkingPoint "Wait for running... Read metrics on running app"
+talkingPoint
+springBootStart java8with2.6.log
+talkingPoint
 validateApp
-#talkingPoint
-showMemoryUsage "$(jps | grep 'BootwebApplication' | cut -d ' ' -f 1)" java8with2.7.log2
-talkingPoint "Stop the 2.7 app"
+talkingPoint
+showMemoryUsage "$(jps | grep 'HelloSpringApplication' | cut -d ' ' -f 1)" java8with2.6.log2
+talkingPoint
 springBootStop
-talkingPoint "Now, upgrade it with OpenRewrite"
+talkingPoint
 rewriteApplication
-talkingPoint "Switch to Java v21 for Spring Boot 3.2"
+talkingPoint
 useJava21
-talkingPoint "Start upgraded Spring Boot app, wait for SPRING logo"
+talkingPoint
 springBootStart java21with3.2.log
-talkingPoint "Wait for running... Read metrics on running app"
+talkingPoint
 validateApp
-#talkingPoint
-showMemoryUsage "$(jps | grep 'BootwebApplication' | cut -d ' ' -f 1)" java21with3.2.log2
-talkingPoint "Stop the 3.2 app"
+talkingPoint
+showMemoryUsage "$(jps | grep 'HelloSpringApplication' | cut -d ' ' -f 1)" java21with3.2.log2
+talkingPoint
 springBootStop
-statsSoFarTable
-talkingPoint "Now we will rebuild it as a native image.  It will take a bit longer to build"
+talkingPoint
 buildNative
-talkingPoint "Run the new native image"
+talkingPoint
 startNative
-talkingPoint "Read metrics on the native app"
+talkingPoint
 validateApp
-#talkingPoint
-showMemoryUsage "$(pgrep bootweb)" nativeWith3.2.log2
-talkingPoint "Stop the native image version"
+talkingPoint
+showMemoryUsage "$(pgrep hello-spring)" nativeWith3.2.log2
+talkingPoint
 stopNative
+talkingPoint
 #statsSoFar
-statsSoFarTableNative
+statsSoFarTable

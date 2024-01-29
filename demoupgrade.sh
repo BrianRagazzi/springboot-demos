@@ -10,7 +10,6 @@ PROMPT_TIMEOUT=5
 
 # Function to pause and clear the screen
 function talkingPoint() {
-  echo "*** $1 ***"
   wait
   clear
 }
@@ -72,17 +71,8 @@ function springBootStop {
 # Check the health of the application
 function validateApp {
   displayMessage "Check application health"
-  #pei "http :8080/actuator/health"
-  # add loop to recheck if app isn't up yet
-  pei "while ! http :8080/actuator/health 2>/dev/null; do sleep 1; done"
+  pei "http :8080/actuator/health"
 }
-
-
-function exportSpringDependencies {
-  displayMessage "Export Spring Dependencies for SHAR"
-  pei "./mvnw dependency:tree -Dscope=runtime | grep -E '(org.springframework|io.micrometer)' > '$1'"
-}
-
 
 # Display memory usage of the application
 function showMemoryUsage {
@@ -137,33 +127,6 @@ function startupTime() {
   echo "$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < $1)"
 }
 
-# Compare and display statistics
-function statsSoFar {
-  displayMessage "Comparison of memory usage and startup times"
-  echo ""
-  echo "Spring Boot 2.6 with Java 8"
-  grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log
-  echo "The process was using $(cat java8with2.6.log2) megabytes"
-  echo ""
-  echo ""
-  echo "Spring Boot 3.2 with Java 21"
-  grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log
-  echo "The process was using $(cat java21with3.2.log2) megabytes"
-  echo ""
-  echo ""
-  echo "Spring Boot 3.2 with AOT processing, native image"
-  grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log
-  echo "The process was using $(cat nativeWith3.2.log2) megabytes"
-  echo ""
-  echo ""
-  MEM1="$(grep '\S' java8with2.6.log2)"
-  MEM2="$(grep '\S' java21with3.2.log2)"
-  MEM3="$(grep '\S' nativeWith3.2.log2)"
-  echo ""
-  echo "The Spring Boot 3.2 with Java 21 version is using $(bc <<< "scale=2; ${MEM2}/${MEM1}*100")% of the original footprint"
-  echo "The Spring Boot 3.2 with AOT processing version is using $(bc <<< "scale=2; ${MEM3}/${MEM1}*100")% of the original footprint"
-}
-
 
 function statsSoFarTable {
   displayMessage "Comparison of memory usage and startup times"
@@ -184,12 +147,6 @@ function statsSoFarTable {
   MEM2=$(cat java21with3.2.log2)
   PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
   printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$(startupTime 'java21with3.2.log')" "$MEM2" "$PERC2%"
-
-  # Spring Boot 3.2 with AOT processing, native image
-  #STARTUP3=$(grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log)
-  #MEM3=$(cat nativeWith3.2.log2)
-  #PERC3=$(bc <<< "scale=2; 100 - ${MEM3}/${MEM1}*100")
-  #printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$(startupTime 'nativeWith3.2.log')" "$MEM3" "$PERC3%"
 
   echo "--------------------------------------------------------------------------------------------"
 }
@@ -223,7 +180,6 @@ function statsSoFarTableNative {
   echo "--------------------------------------------------------------------------------------------"
 }
 
-
 # Display Docker image statistics
 function imageStats {
   pei "docker images | grep demo"
@@ -233,40 +189,37 @@ function imageStats {
 initSDKman
 init
 useJava8
-talkingPoint "We're going to clone a Spring Boot v2.6 app"
+talkingPoint
 cloneApp
-talkingPoint "Start Spring Boot app as-is, wait for SPRING logo"
+talkingPoint
 springBootStart java8with2.6.log
-talkingPoint "Read metrics on running app"
+talkingPoint
 validateApp
-#talkingPoint
+talkingPoint
 showMemoryUsage "$(jps | grep 'HelloSpringApplication' | cut -d ' ' -f 1)" java8with2.6.log2
-talkingPoint "Stop the 2.6 app"
-exportSpringDependencies springDependencies-26.txt
+talkingPoint
 springBootStop
-talkingPoint "Now, upgrade it with OpenRewrite"
+talkingPoint
 rewriteApplication
-talkingPoint "Switch to Java v21 for Spring Boot 3.2"
+talkingPoint
 useJava21
-talkingPoint "Start upgraded Spring Boot app, wait for SPRING logo"
+talkingPoint
 springBootStart java21with3.2.log
-talkingPoint "Read metrics on running app"
+talkingPoint
 validateApp
-#talkingPoint
+talkingPoint
 showMemoryUsage "$(jps | grep 'HelloSpringApplication' | cut -d ' ' -f 1)" java21with3.2.log2
-talkingPoint "Stop the 3.2 app"
-exportSpringDependencies springDependencies-32.txt
+talkingPoint
 springBootStop
-#talkingPoint "Now, let's rebuild it as a native image.  It'll take a bit longer to build"
-#buildNative
-#talkingPoint "Let's run the new native image"
-#startNative
-#talkingPoint "Read metrics on the native app"
-#validateApp
-#talkingPoint
-#showMemoryUsage "$(pgrep hello-spring)" nativeWith3.2.log2
-#talkingPoint "Stop the native image version"
-#stopNative
-#talkingPoint
-#statsSoFar
+talkingPoint
+# buildNative
+# talkingPoint
+# startNative
+# talkingPoint
+# validateApp
+# talkingPoint
+# showMemoryUsage "$(pgrep hello-spring)" nativeWith3.2.log2
+# talkingPoint
+# stopNative
+# talkingPoint
 statsSoFarTable
