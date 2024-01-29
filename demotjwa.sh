@@ -198,7 +198,7 @@ function statsSoFarTableNative {
   #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.7.log)
   MEM1=$(cat java8with2.7.log2)
   START1=$(startupTime 'java8with2.7.log')
-  printf "%-40s %-30s %-20s %-10s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "-" "$MEM1" "-"
+  printf "%-40s %-30s %-20s %-10s %s\n" "Spring Boot 2.7 with Java 8" "$START1" "-" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
   #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
