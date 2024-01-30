@@ -39,7 +39,7 @@ function init {
 
 # Switch to Java 8 and display version
 function useJava8 {
-  displayMessage "Use Java 8, this is for educational purposes only, don't do this at home! (I have jokes.)"
+  displayMessage "Use Java 8, this is for educational purposes only, don't do this in prod!"
   pei "sdk use java 8.0.392-librca"
   pei "java -version"
 }
@@ -165,7 +165,7 @@ function statsSoFarTable {
   echo ""
 
   # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (% faster)" "(MB) Used" "(MB) Savings"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (faster)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
@@ -191,7 +191,7 @@ function statsSoFarTableNative {
   echo ""
 
   # Headers
-  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (% faster)" "(MB) Used" "(MB) Savings"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (faster)" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
