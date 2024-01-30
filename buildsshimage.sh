@@ -10,6 +10,6 @@ docker run -it --rm \
   -v openrewrite-root-m2:/root/.m2 \
   -v openrewrite-root-sdkman-candidates:/root/.sdkman/candidates \
   -w /data \
-  -p 22:8022 \
+  -p 8022:22 \
   openrewritedemossh /bin/bash
   #./demo.sh
