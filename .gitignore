@@ -8,4 +8,4 @@ upgrade-example/
 vendir/
 .vscode/
 .gitignore
-vendir.lock.yml
+*.lock.yml
