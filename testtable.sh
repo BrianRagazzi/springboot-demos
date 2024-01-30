@@ -18,7 +18,7 @@ function statsSoFarTable {
   echo ""
 
   # Headers
-  printf "%-40s %-30s %-20s %-10s %s\n" "Configuration" "Startup Time (seconds)" "Faster" "(MB) Used" "(MB) Savings"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (seconds)" "Faster" "(MB) Used" "(MB) Savings"
   echo "--------------------------------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
@@ -26,7 +26,7 @@ function statsSoFarTable {
   #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.6.log)
   MEM1=$(cat java8with2.6.log2)
   START1=$(startupTime 'java8with2.6.log')
-  printf "%-40s %-30s %-20s %-10s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "-" "$MEM1" "-"
+  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "-" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
   #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
@@ -34,7 +34,7 @@ function statsSoFarTable {
   PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
   START2=$(startupTime 'java21with3.2.log')
   PERCSTART2=$(bc <<< "scale=2; 100 - ${START2}/${START1}*100")
-  printf "%-40s %-30s %-20s %-10s %s \n" "Spring Boot 3.2 with Java 21" "$START2" "$PERCSTART2%" "$MEM2" "$PERC2%"
+  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$START2" "$PERCSTART2%" "$MEM2" "$PERC2%"
 
   echo "--------------------------------------------------------------------------------------------------------------------"
 }
@@ -49,15 +49,15 @@ function statsSoFarTableNative {
   echo ""
 
   # Headers
-  printf "%-40s %-30s %-20s %-10s %s\n" "Configuration" "Startup Time (seconds)" "Faster" "(MB) Used" "(MB) Savings"
-  echo "--------------------------------------------------------------------------------------------------------------------"
+  printf "%-35s %-25s %-15s %s\n" "Configuration" "Startup Time (% faster)" "(MB) Used" "(MB) Savings"
+  echo "--------------------------------------------------------------------------------------------"
 
   # Spring Boot 2.6 with Java 8
   #STARTUP1=$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < java8with2.7.log)
   #STARTUP1=$(grep -o 'Started HelloSpringApplication in .*' < java8with2.7.log)
   MEM1=$(cat java8with2.7.log2)
   START1=$(startupTime 'java8with2.7.log')
-  printf "%-40s %-30s %-20s %-10s %s\n" "Spring Boot 2.6 with Java 8" "$START1" "-" "$MEM1" "-"
+  printf "%-35s %-25s %-15s %s\n" "Spring Boot 2.7 with Java 8" "$START1" "$MEM1" "-"
 
   # Spring Boot 3.2 with Java 21
   #STARTUP2=$(grep -o 'Started HelloSpringApplication in .*' < java21with3.2.log)
@@ -65,7 +65,7 @@ function statsSoFarTableNative {
   PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
   START2=$(startupTime 'java21with3.2.log')
   PERCSTART2=$(bc <<< "scale=2; 100 - ${START2}/${START1}*100")
-  printf "%-40s %-30s %-20s %-10s %s \n" "Spring Boot 3.2 with Java 21" "$START2" "$PERCSTART2%" "$MEM2" "$PERC2%"
+  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$START2 ($PERCSTART2% faster)" "$MEM2" "$PERC2%"
 
   # Spring Boot 3.2 with AOT processing, native image
   #STARTUP3=$(grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log)
@@ -73,7 +73,7 @@ function statsSoFarTableNative {
   PERC3=$(bc <<< "scale=2; 100 - ${MEM3}/${MEM1}*100")
   START3=$(startupTime 'nativeWith3.2.log')
   PERCSTART3=$(bc <<< "scale=2; 100 - ${START3}/${START1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$START3" "$PERCSTART2%" "$MEM3" "$PERC3%"
+  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$START3 ($PERCSTART3% faster)" "$MEM3" "$PERC3%"
 
 
   echo "--------------------------------------------------------------------------------------------------------------------"
