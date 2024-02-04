@@ -4,7 +4,7 @@
 vendir sync
 . ./vendir/demo-magic/demo-magic.sh
 # Launch with PROMPT_TIMEOUT=0 ./demo.sh to force pauses to never timeout
-PROMPT_TIMEOUT=5
+PROMPT_TIMEOUT=0
 
 export TYPE_SPEED=100
 export DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
@@ -15,8 +15,9 @@ BASE_URL="http://localhost:8080"
 
 # Function to pause and clear the screen
 function talkingPoint() {
+  echo "*** $1 ***"
   wait
-  clear
+  #clear
 }
 
 # Initialize SDKMAN and install required Java versions
@@ -30,7 +31,7 @@ function initSDKman() {
   fi
   sdk update
   sdk install java 21.0.1-graalce
-  sdk install springboot
+  sdk install springboot 3.2.1
 }
 
 # Prepare the working directory
@@ -38,7 +39,7 @@ function init {
   rm -rf "$TEMP_DIR"
   mkdir "$TEMP_DIR"
   cd "$TEMP_DIR"
-  clear
+  # clear
 }
 
 function displayMessage() {
@@ -131,7 +132,7 @@ function testActuators {
   pei "http http://localhost:8080/actuator/health"
   echo "View Actuators in browser at $url"
   echo ""
-  echo "View Grafana at http:///ocalhost:3000/d/spring_boot/spring-boot-statistics/"
+  echo "View Grafana at http://localhost:3000/d/spring_boot/spring-boot-statistics/"
   echo ""
   echo "View Zipkin at http://localhost:9411/zipkin/"
 }
@@ -142,13 +143,13 @@ init
 useJava21
 talkingPoint
 useSpringBootCli32
-talkingPoint
+talkingPoint "Create a project"
 createProject
 talkingPoint
 addComposeItems
 talkingPoint
 addRepositoryAndController
-talkingPoint
+talkingPoint "starting application"
 startSpringBootClean
 talkingPoint
 testCustomerRepo
