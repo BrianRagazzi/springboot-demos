@@ -18,6 +18,8 @@
 - buildimage.sh
   > builds container image with necessary dependencies to run demo scripts within.  
 
+- demo-whatsnew.sh
+  > starts with a simple project and adds features
 
 
 
