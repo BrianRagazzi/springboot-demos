@@ -1,12 +1,53 @@
 #!/usr/bin/env bash
 
 # Load helper functions and set initial variables
-vendir sync
-. ./vendir/demo-magic/demo-magic.sh
+
 export TYPE_SPEED=100
 export DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 TEMP_DIR="upgrade-example"
 PROMPT_TIMEOUT=0 #5
+
+
+# Splain'r How this werks!
+function usage() {
+  echo ""
+  echo "Usage: $0 : Runs SpringBoot demo via demo.sh"
+  echo ""
+  echo ""
+  echo "Options: "
+  echo ""
+  echo "   --fast : Does not compile native version"
+  echo "   --auto : Automatically advances after 5 seconds"
+  echo ""
+  echo ""
+  echo "Example:  $0 --fast"
+  echo ""
+  echo ""
+  echo ""
+}
+
+
+if [  "$1" == "-H" ] || [ "$1" == "-h" ] || [ "$1" == "--H" ] || [ "$1" == "--h" ] || [ "$1" == "-help" ] || [ "$1" == "--help" ]
+  then
+    usage
+    exit 10
+fi
+
+if [ "$1" == "--auto" ] || [ "$2" == "--auto" ]
+  then
+    echo "Setting timeout to 5"
+    vendir sync
+    . ./vendir/demo-magic/demo-magic.sh
+    PROMPT_TIMEOUT=5
+  else
+   echo "Setting timeout to 0"
+   vendir sync
+   . ./vendir/demo-magic/demo-magic.sh
+   PROMPT_TIMEOUT=0
+fi
+
+
+
 
 # Function to pause and clear the screen
 function talkingPoint() {
@@ -128,6 +169,11 @@ function displayMessage() {
   echo ""
 }
 
+function dumpSpringDependencies {
+  displayMessage "exporting Spring dependcies for SHAR"
+  ./mvnw dependency:tree | grep -E '(org.springframework|io.micrometer)' > $1
+}
+
 function startupTime() {
   echo "$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < $1)"
 }
@@ -233,6 +279,7 @@ useJava8
 talkingPoint "Clone a Spring Boot v2.7 app"
 cloneApp
 talkingPoint "Start Spring Boot app as-is, wait for SPRING logo"
+dumpSpringDependencies spring-dependencies-27.txt
 springBootStart java8with2.7.log
 talkingPoint "Wait for running... Read metrics on running app"
 validateApp
@@ -242,6 +289,7 @@ talkingPoint "Stop the 2.7 app"
 springBootStop
 talkingPoint "Now, upgrade it with OpenRewrite"
 rewriteApplication
+dumpSpringDependencies spring-dependencies-32.txt
 talkingPoint "Switch to Java v21 for Spring Boot 3.2"
 useJava21
 talkingPoint "Start upgraded Spring Boot app, wait for SPRING logo"
@@ -253,15 +301,19 @@ showMemoryUsage "$(jps | grep 'BootwebApplication' | cut -d ' ' -f 1)" java21wit
 talkingPoint "Stop the 3.2 app"
 springBootStop
 statsSoFarTable
-talkingPoint "Now we will rebuild it as a native image.  It will take a bit longer to build"
-buildNative
-talkingPoint "Run the new native image"
-startNative
-talkingPoint "Read metrics on the native app"
-validateApp
-#talkingPoint
-showMemoryUsage "$(pgrep bootweb)" nativeWith3.2.log2
-talkingPoint "Stop the native image version"
-stopNative
-#statsSoFar
-statsSoFarTableNative
+
+if [ "$1" != "--fast" ] && [ "$2" != "--fast" ]
+  then
+    talkingPoint "Now we will rebuild it as a native image.  It will take a bit longer to build"
+    buildNative
+    talkingPoint "Run the new native image"
+    startNative
+    talkingPoint "Read metrics on the native app"
+    validateApp
+    #talkingPoint
+    showMemoryUsage "$(pgrep bootweb)" nativeWith3.2.log2
+    talkingPoint "Stop the native image version"
+    stopNative
+    #statsSoFar
+    statsSoFarTableNative
+fi
