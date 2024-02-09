@@ -170,7 +170,7 @@ function displayMessage() {
 }
 
 function dumpSpringDependencies {
-  displayMessage "exporting Spring dependcies for SHAR"
+  displayMessage "Exporting Spring dependcies for SHAR"
   ./mvnw dependency:tree | grep -E '(org.springframework|io.micrometer)' > $1
 }
 
