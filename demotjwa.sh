@@ -46,14 +46,28 @@ if [ "$1" == "--auto" ] || [ "$2" == "--auto" ]
    PROMPT_TIMEOUT=0
 fi
 
+# Stop ANY & ALL Java Process...they could be Springboot running on our ports!
+function cleanUp {
+	local npid=""
+  npid=$(pgrep java)
+ 	if [ "$npid" != "" ]
+		then
+  		displayMessage "*** Stopping Any Previous Existing SpringBoot Apps..."
+			while [ "$npid" != "" ]
+			do
+				echo "***KILLING OFF The Following: $npid..."
+		  	pei "kill -9 $npid"
+				npid=$(pgrep java)
+			done
 
+	fi
+}
 
 
 # Function to pause and clear the screen
 function talkingPoint() {
   echo "*** $1 ***"
   wait
-  #clear
 }
 
 # Initialize SDKMAN and install required Java versions
@@ -66,8 +80,8 @@ function initSDKman() {
     exit 1
   fi
   sdk update
-  sdk install java 8.0.392-librca
-  sdk install java 21.0.1-graalce
+  sdk install java 8.0.432-librca
+  sdk install java 23.1.2.r21-nik
 }
 
 # Prepare the working directory
@@ -75,20 +89,20 @@ function init {
   rm -rf "$TEMP_DIR"
   mkdir "$TEMP_DIR"
   cd "$TEMP_DIR" || exit
-  clear
+  #clear
 }
 
 # Switch to Java 8 and display version
 function useJava8 {
   displayMessage "Use Java 8, this is for educational purposes only, don't do this in prod!"
-  pei "sdk use java 8.0.392-librca"
+  pei "sdk use java 8.0.432-librca"
   pei "java -version"
 }
 
 # Switch to Java 21 and display version
 function useJava21 {
-  displayMessage "Switch to Java 21 for Spring Boot 3"
-  pei "sdk use java 21.0.1-graalce"
+  displayMessage "Switch to Java 23 for Spring Boot 3.x"
+  pei "sdk use java 23.1.2.r21-nik"
   pei "java -version"
 }
 
@@ -114,8 +128,6 @@ function springBootStop {
 # Check the health of the application
 function validateApp {
  displayMessage "Check application health"
- #pei "http :8080/actuator/health"
- # add loop to recheck if app isn't up yet
  pei "while ! http :8080/actuator/health 2>/dev/null; do sleep 1; done"
 }
 
@@ -129,11 +141,12 @@ function showMemoryUsage {
   echo "${mem_usage}" >> "$log_file"
 }
 
-# Upgrade the application to Spring Boot 3.2
+# Upgrade the application to Spring Boot 3.3
 function rewriteApplication {
-  displayMessage "Upgrade to Spring Boot 3.2"
+  displayMessage "Upgrade to Spring Boot 3.3"
   #pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2"
-  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2,org.openrewrite.java.spring.boot3.SpringBoot3BestPractices"
+  #pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2,org.openrewrite.java.spring.boot3.SpringBoot3BestPractices"
+  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -Drewrite.activeRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3,org.openrewrite.java.spring.boot3.SpringBoot3BestPractices"
 }
 
 # Build a native image of the application
@@ -169,10 +182,10 @@ function displayMessage() {
   echo ""
 }
 
-function dumpSpringDependencies {
-  displayMessage "Exporting Spring dependencies for SHAR"
-  ./mvnw dependency:tree | grep -E '(org.springframework|io.micrometer)' > $1
-}
+# function dumpSpringDependencies {
+#   displayMessage "Exporting Spring dependencies for SHAR"
+#   ./mvnw dependency:tree | grep -E '(org.springframework|io.micrometer)' > $1
+# }
 
 function startupTime() {
   echo "$(sed -nE 's/.* in ([0-9]+\.[0-9]+) seconds.*/\1/p' < $1)"
@@ -253,7 +266,7 @@ function statsSoFarTableNative {
   PERC2=$(bc <<< "scale=2; 100 - ${MEM2}/${MEM1}*100")
   START2=$(startupTime 'java21with3.2.log')
   PERCSTART2=$(bc <<< "scale=2; 100 - ${START2}/${START1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with Java 21" "$START2 ($PERCSTART2% faster)" "$MEM2" "$PERC2%"
+  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.3 with Java 23" "$START2 ($PERCSTART2% faster)" "$MEM2" "$PERC2%"
 
   # Spring Boot 3.2 with AOT processing, native image
   #STARTUP3=$(grep -o 'Started HelloSpringApplication in .*' < nativeWith3.2.log)
@@ -261,7 +274,7 @@ function statsSoFarTableNative {
   PERC3=$(bc <<< "scale=2; 100 - ${MEM3}/${MEM1}*100")
   START3=$(startupTime 'nativeWith3.2.log')
   PERCSTART3=$(bc <<< "scale=2; 100 - ${START3}/${START1}*100")
-  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.2 with AOT, native" "$START3 ($PERCSTART3% faster)" "$MEM3" "$PERC3%"
+  printf "%-35s %-25s %-15s %s \n" "Spring Boot 3.3 with AOT, native" "$START3 ($PERCSTART3% faster)" "$MEM3" "$PERC3%"
 
 
   echo "--------------------------------------------------------------------------------------------"
@@ -273,13 +286,14 @@ function imageStats {
 }
 
 # Main execution flow
+cleanUp
 initSDKman
 init
 useJava8
 talkingPoint "Clone a Spring Boot v2.7 app"
 cloneApp
 talkingPoint "Start Spring Boot app as-is, wait for SPRING logo"
-dumpSpringDependencies spring-dependencies-27.txt
+#dumpSpringDependencies spring-dependencies-27.txt
 springBootStart java8with2.7.log
 talkingPoint "Wait for running... Read metrics on running app"
 validateApp
@@ -289,8 +303,8 @@ talkingPoint "Stop the 2.7 app"
 springBootStop
 talkingPoint "Now, upgrade it with OpenRewrite"
 rewriteApplication
-dumpSpringDependencies spring-dependencies-32.txt
-talkingPoint "Switch to Java v21 for Spring Boot 3.2"
+#dumpSpringDependencies spring-dependencies-32.txt
+talkingPoint "Switch to Java v23 for Spring Boot 3.3"
 useJava21
 talkingPoint "Start upgraded Spring Boot app, wait for SPRING logo"
 springBootStart java21with3.2.log
