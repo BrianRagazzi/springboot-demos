@@ -25,8 +25,10 @@ function initSDKman() {
     exit 1
   fi
   sdk update
-  sdk install java 8.0.392-librca
-  sdk install java 21.0.1-graalce
+  #sdk install java 8.0.392-librca
+  #sdk install java 21.0.1-graalce
+  sdk install java 8.0.432-librca
+  sdk install java 23.1.2.r21-nik
 }
 
 # Prepare the working directory
@@ -40,14 +42,14 @@ function init {
 # Switch to Java 8 and display version
 function useJava8 {
   displayMessage "Use Java 8, this is for educational purposes only, don't do this at home! (I have jokes.)"
-  pei "sdk use java 8.0.392-librca"
+  pei "sdk use java 8.0.432-librca"
   pei "java -version"
 }
 
 # Switch to Java 21 and display version
 function useJava21 {
-  displayMessage "Switch to Java 21 for Spring Boot 3"
-  pei "sdk use java 21.0.1-graalce"
+  displayMessage "Switch to Java 23 for Spring Boot 3"
+  pei "sdk use java 23.1.2.r21-nik"
   pei "java -version"
 }
 
@@ -87,10 +89,10 @@ function showMemoryUsage {
   echo "${mem_usage}" >> "$log_file"
 }
 
-# Upgrade the application to Spring Boot 3.2
+# Upgrade the application to Spring Boot 3.3
 function rewriteApplication {
-  displayMessage "Upgrade to Spring Boot 3.2"
-  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -DactiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2"
+  displayMessage "Upgrade to Spring Boot 3.3"
+  pei "./mvnw -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:LATEST -Drewrite.activeRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3"
 }
 
 # Build a native image of the application
